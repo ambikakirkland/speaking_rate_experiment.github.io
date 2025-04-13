@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="jspsych/jspsych.js"></script>
+    <script src="jspsych/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/plugin-preload.js"></script>
+    <script src="jspsych/plugin-audio-keyboard-response.js"></script>
+    <script src="jspsych/plugin-instructions.js"></script>
+    <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body></body>
+  <script>
+    var jsPsych = initJsPsych({
+        show_progress_bar: true,
+        auto_update_progress_bar: false,
+        on_close: function() {
+            jsPsych.data.get().localSave('csv', 'results.csv');
+        }
+      });
+
+
+    var preload = {
+    type: jsPsychPreload,
+    auto_preload: true
+    }
+
+    var timeline = [];
+    timeline.push(preload)
+    
+    var n_trials = 1;
+
+    //specify which condition the participant should be assigned to
+    var condition_assignment = 1;
+
+
+    var list1 = [
+    {file: 'speaking_rate_matcha.wav', type:'stimulus'},
+    {file: 'sample1.wav', type: 'filler'},
+    ];
+
+    var list2 = [
+    {file: 'sample1.wav', type: 'stimulus'},
+    {file: 'speaking_rate_matcha.wav', type: 'filler'},
+    ];
+
+    var instructions = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <p>Task instructions</p>
+
+        <p>Press any key to begin.</p>
+      `,
+      post_trial_gap: 2000
+    };
+    timeline.push(instructions);
+
+    //choose the stimulus list based on the condition assignment
+    if (condition_assignment == 1) {
+        stimlist = list1;
+    } else if (condition_assignment == 2){
+        stimlist = list2;
+    }
+
+
+    var items = stimlist
+
+    var trial = {
+    type: jsPsychAudioKeyboardResponse,
+    stimulus: jsPsych.timelineVariable('file'),
+    prompt: 'Press space when you notice that the speech is getting faster.',
+    response_ends_trial: true,
+    on_finish: function() {
+    var curr_progress_bar_value = jsPsych.getProgressBarCompleted();
+    jsPsych.setProgressBar(curr_progress_bar_value + (1/n_trials));
+    }
+    };
+
+    var final_trial = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: `<p>You've finished the task. Thanks for participating!</p>`,
+    choices: "NO_KEYS"
+    }
+
+    var test_procedure = {
+    timeline: [trial],
+    timeline_variables: items,
+    randomize_order: true,
+    repetitions: 1
+    };
+
+    //var getdata = jsPsych.data.get().localSave('csv', 'results.csv');
+    
+    timeline.push(test_procedure, final_trial);
+
+    jsPsych.run(timeline);
+
+    
+    
+  </script>
+</html>
