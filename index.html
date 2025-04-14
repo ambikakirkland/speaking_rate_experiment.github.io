@@ -8,6 +8,7 @@
     <script src="jspsych/plugin-audio-keyboard-response.js"></script>
     <script src="jspsych/plugin-instructions.js"></script>
     <script src="jspsych/plugin-survey-likert.js"></script>
+    <script src="jspsych/plugin-survey-text.js"></script>
     <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
   </head>
   <body></body>
@@ -54,7 +55,20 @@
       `,
       post_trial_gap: 2000
     };
+
     timeline.push(instructions);
+
+    var instructions2 = {
+    type: jsPsychInstructions,
+    pages: [
+    'Welcome to the experiment. Click next to begin.',
+    'This is the second page of instructions.',
+    'This is the final page.'
+    ],
+    show_clickable_nav: true
+    };
+
+    timeline.push(instructions2);
 
     //choose the stimulus list based on the condition assignment
     if (condition_assignment == 1) {
@@ -63,6 +77,15 @@
         stimlist = list2;
     }
 
+    var demographics = {
+    type: jsPsychSurveyText,
+    questions: [
+    {prompt: 'This is a required question with a placeholder', placeholder: 'blahblah', required: true},
+    {prompt: 'Another question'}
+    ]
+    };
+
+    timeline.push(demographics);
 
     var items = stimlist
 
