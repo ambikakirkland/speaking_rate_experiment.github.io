@@ -7,6 +7,7 @@
     <script src="jspsych/plugin-preload.js"></script>
     <script src="jspsych/plugin-audio-keyboard-response.js"></script>
     <script src="jspsych/plugin-instructions.js"></script>
+    <script src="jspsych/plugin-survey-likert.js"></script>
     <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
   </head>
   <body></body>
@@ -91,7 +92,29 @@
 
     //var getdata = jsPsych.data.get().localSave('csv', 'results.csv');
     
-    timeline.push(test_procedure, final_trial);
+
+    var likert_scale =[
+    "5", 
+    "4", 
+    "3", 
+    "2", 
+    "1"
+    ];
+
+    var items_naturalness = [
+	  {prompt: `<p><audio src="DisfluentFluentABAB1.wav" autoplay controls></p>
+	  <p>Please rate the naturalness of the speech on a scale from 1 (poor) to 5 (excellent)</p>`, name:'name', labels:likert_scale },
+    ];
+
+
+    var naturalness = {
+    type: jsPsychSurveyLikert,
+    questions: items_naturalness,
+    };
+
+
+
+    timeline.push(test_procedure, naturalness, final_trial);
 
     jsPsych.run(timeline);
 
